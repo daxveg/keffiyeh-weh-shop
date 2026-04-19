@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEFFIYEH — Heritage Textile Co.</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { cursor: none; }
+  .cursor { position: fixed; width: 12px; height: 12px; background: var(--terracotta); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid var(--charcoal); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:1000; opacity:.4; }
+
+  .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:80px; position:relative; overflow:hidden; }
+  .hero-text { display:flex; flex-direction:column; justify-content:center; padding:5rem 3rem 5rem 4rem; }
+  .hero-eyebrow { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.3em; text-transform:uppercase; color:var(--terracotta); margin-bottom:1.5rem; opacity:0; animation:fadeUp .8s ease .3s forwards; }
+  .hero-title { font-family:'Playfair Display',serif; font-size:clamp(4rem,7vw,6.5rem); font-weight:900; line-height:.92; color:var(--black-ink); margin-bottom:2rem; opacity:0; animation:fadeUp .8s ease .5s forwards; }
+  .hero-title em { font-style:italic; color:var(--terracotta); }
+  .hero-desc { font-size:1rem; line-height:1.75; opacity:0; max-width:400px; animation:fadeUp .8s ease .7s forwards; margin-bottom:2.5rem; }
+  .hero-actions { display:flex; gap:1rem; align-items:center; opacity:0; animation:fadeUp .8s ease .9s forwards; }
+  .hero-visual { position:relative; overflow:hidden; opacity:0; animation:fadeIn 1.2s ease .4s forwards; }
+  .hero-pattern { position:absolute; inset:0; background: repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(196,91,46,.08) 20px,rgba(196,91,46,.08) 22px), repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(90,99,64,.08) 20px,rgba(90,99,64,.08) 22px); }
+  .hero-img-area { position:absolute; inset:2rem; display:flex; align-items:center; justify-content:center; }
+  .keffiyeh-svg { width:360px; height:360px; filter:drop-shadow(0 20px 60px rgba(28,26,23,.2)); animation:float 6s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-20px) rotate(2deg)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .marquee-band { background:var(--charcoal); color:var(--cream); padding:.8rem 0; overflow:hidden; white-space:nowrap; }
+  .marquee-inner { display:inline-block; animation:marquee 20s linear infinite; }
+  .marquee-inner span { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; padding:0 3rem; opacity:.7; }
+  .marquee-inner span.dot { color:var(--terracotta); opacity:1; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  .features { padding:5rem 4rem; display:grid; grid-template-columns:repeat(4,1fr); gap:3rem; border-top:1px solid rgba(28,26,23,.1); }
+  .feature-icon { font-size:1.5rem; margin-bottom:1rem; }
+  .feature-title { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; margin-bottom:.5rem; }
+  .feature-desc { font-size:.85rem; line-height:1.7; opacity:.65; }
+
+  .about-strip { background:var(--charcoal); color:var(--cream); display:grid; grid-template-columns:1fr 1fr; min-height:50vh; }
+  .about-text { padding:6rem 4rem; display:flex; flex-direction:column; justify-content:center; }
+  .about-eyebrow { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.3em; text-transform:uppercase; color:var(--sand); margin-bottom:1.5rem; }
+  .about-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,3.5vw,3rem); font-weight:900; line-height:1.1; margin-bottom:1.5rem; }
+  .about-title em { font-style:italic; color:var(--terracotta); }
+  .about-body { font-size:.95rem; line-height:1.85; opacity:.75; max-width:420px; }
+  .about-visual { position:relative; background: repeating-linear-gradient(0deg,transparent,transparent 22px,rgba(245,240,232,.06) 22px,rgba(245,240,232,.06) 24px), repeating-linear-gradient(90deg,transparent,transparent 22px,rgba(245,240,232,.06) 22px,rgba(245,240,232,.06) 24px), var(--charcoal); }
+  .about-stats { position:absolute; bottom:3rem; left:3rem; display:flex; gap:3rem; }
+  .stat-num { font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--terracotta); line-height:1; }
+  .stat-label { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(245,240,232,.5); margin-top:.3rem; }
+
+  .newsletter { background:var(--terracotta); color:var(--cream); padding:5rem 4rem; display:flex; align-items:center; justify-content:space-between; gap:3rem; }
+  .newsletter-eyebrow { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.3em; text-transform:uppercase; opacity:.7; margin-bottom:.8rem; }
+  .newsletter-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,3vw,2.5rem); font-weight:900; line-height:1.1; }
+  .newsletter-form { display:flex; min-width:420px; }
+  .newsletter-input { flex:1; background:rgba(245,240,232,.15); border:1px solid rgba(245,240,232,.3); border-right:none; color:var(--cream); padding:1rem 1.5rem; font-family:'DM Mono',monospace; font-size:.75rem; outline:none; }
+  .newsletter-input::placeholder { opacity:.5; color:var(--cream); }
+  .newsletter-btn { background:var(--cream); color:var(--terracotta); border:none; padding:1rem 1.8rem; font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s; }
+  .newsletter-btn:hover { background:var(--charcoal); color:var(--cream); }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html">Keffiyeh Co.</a>
+  <ul class="nav-links">
+    <li><a href="collection.html">Collection</a></li>
+    <li><a href="index.html#heritage">Heritage</a></li>
+    <li><a href="cart.html">Cart</a></li>
+  </ul>
+  <a class="nav-cart" href="cart.html" id="cart-badge">Bag (0)</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Est. Heritage Textile Co. — Since 1948</p>
+    <h1 class="hero-title">Worn by<br><em>History.</em><br>Carried by<br>You.</h1>
+    <p class="hero-desc">Each keffiyeh is hand-woven using traditional patterns passed through generations — a living symbol of identity, solidarity, and craft.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="collection.html">Shop the Collection</a>
+      <a class="btn-ghost" href="#heritage">Our Story</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-pattern"></div>
+    <div class="hero-img-area">
+      <svg class="keffiyeh-svg" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="cp" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+            <rect width="12" height="12" fill="#C45B2E" opacity="0.9"/>
+            <rect x="12" y="12" width="12" height="12" fill="#C45B2E" opacity="0.9"/>
+          </pattern>
+          <filter id="sh"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#1C1A17" flood-opacity="0.3"/></filter>
+        </defs>
+        <polygon points="40,40 320,40 280,280 180,340 80,280" fill="url(#cp)" filter="url(#sh)"/>
+        <polygon points="40,40 320,40 280,280 180,340 80,280" fill="#F5F0E8" opacity="0.3"/>
+        <line x1="40" y1="80" x2="315" y2="80" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="45" y1="120" x2="305" y2="120" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="55" y1="160" x2="295" y2="160" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="70" y1="200" x2="280" y2="200" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="100" y1="40" x2="88" y2="260" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="180" y1="40" x2="180" y2="340" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <line x1="260" y1="40" x2="272" y2="260" stroke="#1C1A17" stroke-width="1.5" opacity="0.4"/>
+        <polygon points="40,40 320,40 280,280 180,340 80,280" fill="none" stroke="#C45B2E" stroke-width="3"/>
+        <circle cx="40" cy="40" r="6" fill="#C45B2E"/>
+        <circle cx="320" cy="40" r="6" fill="#C45B2E"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-band">
+  <div class="marquee-inner">
+    <span>Traditional Weave</span><span class="dot">✦</span><span>Handcrafted Heritage</span><span class="dot">✦</span><span>Free Shipping over €75</span><span class="dot">✦</span><span>100% Cotton</span><span class="dot">✦</span><span>Ethically Sourced</span><span class="dot">✦</span><span>Symbol of Solidarity</span><span class="dot">✦</span>
+    <span>Traditional Weave</span><span class="dot">✦</span><span>Handcrafted Heritage</span><span class="dot">✦</span><span>Free Shipping over €75</span><span class="dot">✦</span><span>100% Cotton</span><span class="dot">✦</span><span>Ethically Sourced</span><span class="dot">✦</span><span>Symbol of Solidarity</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<div class="features" id="heritage">
+  <div class="feature-item reveal">
+    <div class="feature-icon">◈</div>
+    <div class="feature-title">Authentic Weave</div>
+    <div class="feature-desc">Traditional jacquard patterns with roots in Levantine textile history.</div>
+  </div>
+  <div class="feature-item reveal">
+    <div class="feature-icon">◉</div>
+    <div class="feature-title">100% Cotton</div>
+    <div class="feature-desc">Breathable, durable, and naturally soft — perfect in any climate.</div>
+  </div>
+  <div class="feature-item reveal">
+    <div class="feature-icon">◎</div>
+    <div class="feature-title">Ethical Sourcing</div>
+    <div class="feature-desc">Every purchase supports artisan families and fair trade practices.</div>
+  </div>
+  <div class="feature-item reveal">
+    <div class="feature-icon">◫</div>
+    <div class="feature-title">Worldwide Shipping</div>
+    <div class="feature-desc">Free on orders over €75. Delivered within 5–8 business days.</div>
+  </div>
+</div>
+
+<div class="about-strip">
+  <div class="about-text reveal">
+    <p class="about-eyebrow">Craftsmanship & Heritage</p>
+    <h2 class="about-title">Woven with<br><em>Purpose</em> &<br>Precision.</h2>
+    <p class="about-body">The keffiyeh is more than a garment — it is a canvas of cultural identity woven into every thread. Our pieces are produced by skilled artisans using traditional looms, ensuring each pattern honors the craft that has defined this textile for centuries.</p>
+  </div>
+  <div class="about-visual">
+    <div class="about-stats">
+      <div><div class="stat-num">70+</div><div class="stat-label">Years of craft</div></div>
+      <div><div class="stat-num">12</div><div class="stat-label">Pattern families</div></div>
+      <div><div class="stat-num">100%</div><div class="stat-label">Natural cotton</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="newsletter reveal">
+  <div>
+    <p class="newsletter-eyebrow">Join the Community</p>
+    <h3 class="newsletter-title">Stories of<br>cloth & culture.</h3>
+  </div>
+  <div class="newsletter-form">
+    <input class="newsletter-input" type="email" placeholder="your@email.com" id="nl-input">
+    <button class="newsletter-btn" onclick="subscribe()">Subscribe</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Keffiyeh Co.</div>
+  <span class="footer-copy">© 2026 Keffiyeh Co. — Handwoven with heritage.</span>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  (function animate(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animate); })();
+
+  const obs = new IntersectionObserver(entries => entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'), 80*i); }), {threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  function subscribe() {
+    const i = document.getElementById('nl-input');
+    if(i.value.includes('@')) i.value = 'Thank you — you\'re in!';
+  }
+
+  updateCartBadge();
+</script>
+</body>
+</html>

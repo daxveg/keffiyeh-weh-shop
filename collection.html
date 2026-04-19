@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection — Keffiyeh Co.</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .page-header { padding: 5rem 4rem 3rem; border-bottom: 1px solid rgba(28,26,23,.12); display:flex; justify-content:space-between; align-items:flex-end; }
+  .page-eyebrow { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.3em; text-transform:uppercase; color:var(--terracotta); margin-bottom:.8rem; }
+  .page-title { font-family:'Playfair Display',serif; font-size:clamp(3rem,5vw,5rem); font-weight:900; line-height:1; }
+  .filter-bar { display:flex; gap:1rem; align-items:center; }
+  .filter-btn { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; padding:.5rem 1.2rem; background:transparent; border:1px solid rgba(28,26,23,.25); cursor:pointer; transition:all .2s; color:var(--charcoal); }
+  .filter-btn:hover, .filter-btn.active { background:var(--charcoal); color:var(--cream); border-color:var(--charcoal); }
+
+  .collection-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:2px; }
+
+  .product-card { background:var(--white-wash); position:relative; overflow:hidden; cursor:pointer; transition:transform .4s cubic-bezier(.25,.46,.45,.94); }
+  .product-card:hover { transform:translateY(-6px); z-index:2; }
+
+  .product-img { aspect-ratio:3/4; position:relative; overflow:hidden; }
+  .product-pattern-bg { position:absolute; inset:0; transition:transform .6s cubic-bezier(.25,.46,.45,.94); }
+  .product-card:hover .product-pattern-bg { transform:scale(1.05); }
+
+  .product-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(28,26,23,.7) 0%, transparent 50%); opacity:0; transition:opacity .3s; display:flex; align-items:flex-end; padding:1.5rem; }
+  .product-card:hover .product-overlay { opacity:1; }
+  .overlay-btn { background:var(--cream); color:var(--charcoal); font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; padding:.8rem 1.5rem; border:none; cursor:pointer; transition:background .2s, color .2s; width:100%; }
+  .overlay-btn:hover { background:var(--terracotta); color:var(--cream); }
+
+  .product-info { padding:1.2rem 1.5rem; display:flex; justify-content:space-between; align-items:flex-end; }
+  .product-name { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; margin-bottom:.25rem; }
+  .product-origin { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--terracotta); }
+  .product-price { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; }
+
+  .product-badge { position:absolute; top:1rem; left:1rem; background:var(--terracotta); color:var(--cream); font-family:'DM Mono',monospace; font-size:.55rem; letter-spacing:.15em; text-transform:uppercase; padding:.3rem .7rem; z-index:2; }
+
+  .added-flash { position:fixed; bottom:2rem; right:2rem; background:var(--charcoal); color:var(--cream); font-family:'DM Mono',monospace; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; padding:1rem 2rem; transform:translateY(100px); transition:transform .3s; z-index:999; }
+  .added-flash.show { transform:translateY(0); }
+
+  @media(max-width:900px){
+    .collection-grid { grid-template-columns:1fr 1fr; }
+    .page-header { flex-direction:column; align-items:flex-start; gap:1.5rem; padding:4rem 1.5rem 2rem; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">Keffiyeh Co.</a>
+  <ul class="nav-links">
+    <li><a href="collection.html" class="active">Collection</a></li>
+    <li><a href="index.html#heritage">Heritage</a></li>
+    <li><a href="cart.html">Cart</a></li>
+  </ul>
+  <a class="nav-cart" href="cart.html" id="cart-badge">Bag (0)</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div>
+      <p class="page-eyebrow">Heritage Textile Co.</p>
+      <h1 class="page-title">The Collection</h1>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filter('all',this)">All</button>
+      <button class="filter-btn" onclick="filter('classic',this)">Classic</button>
+      <button class="filter-btn" onclick="filter('earth',this)">Earth Tones</button>
+      <button class="filter-btn" onclick="filter('limited',this)">Limited</button>
+    </div>
+  </div>
+
+  <div class="collection-grid" id="grid"></div>
+</div>
+
+<div class="added-flash" id="flash">Added to bag ✦</div>
+
+<footer>
+  <div class="footer-logo">Keffiyeh Co.</div>
+  <span class="footer-copy">© 2026 Keffiyeh Co. — Handwoven with heritage.</span>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+const ALL_PRODUCTS = [
+  { id:1, name:"Classic Red & White", origin:"Traditional Palestinian", price:45, pattern:"pattern-red", tag:"classic", badge:null },
+  { id:2, name:"Black & White", origin:"Heritage Weave", price:45, pattern:"pattern-black", tag:"classic", badge:"Bestseller" },
+  { id:3, name:"Olive & Cream", origin:"Earth Tone Series", price:48, pattern:"pattern-olive", tag:"earth", badge:null },
+  { id:4, name:"Navy & White", origin:"Maritime Edition", price:48, pattern:"pattern-navy", tag:"earth", badge:null },
+  { id:5, name:"Desert Sand", origin:"Nomad Collection", price:52, pattern:"pattern-sand", tag:"limited", badge:"Limited" },
+  { id:6, name:"Burgundy & Cream", origin:"Harvest Edition", price:52, pattern:"pattern-red", tag:"limited", badge:"New" },
+];
+
+function renderGrid(products) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card reveal" data-tag="${p.tag}">
+      <div class="product-img">
+        <div class="product-pattern-bg ${p.pattern}"></div>
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+        <div class="product-overlay">
+          <button class="overlay-btn" onclick="handleAdd(${p.id})">Add to Bag</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-origin">${p.origin}</div>
+        </div>
+        <div class="product-price">€${p.price}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const obs = new IntersectionObserver(entries => entries.forEach((e,i) => {
+    if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'), 60*i);
+  }), {threshold:.05});
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+function filter(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = tag === 'all' ? ALL_PRODUCTS : ALL_PRODUCTS.filter(p => p.tag === tag);
+  renderGrid(filtered);
+}
+
+function handleAdd(id) {
+  addToCart(id);
+  const flash = document.getElementById('flash');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 2000);
+}
+
+renderGrid(ALL_PRODUCTS);
+updateCartBadge();
+</script>
+</body>
+</html>
